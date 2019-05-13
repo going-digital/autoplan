@@ -20,6 +20,7 @@ import http.client as http_client
 # https://opencagedata.com/api Free reverse geocoding
 
 class Planning():
+    BASE_URL = "https://publicaccess.eastsuffolk.gov.uk"
     def __init__(self, params):
         print('Opening session')
         self.s = requests.Session()
@@ -68,7 +69,7 @@ class Planning():
                 processed.append({
                     'title': result.a.string.strip(),
                     'address': address,
-                    'doc_url': "https://publicaccess.eastsuffolk.gov.uk" + result.a['href'],
+                    'doc_url': self.BASE_URL + result.a['href'],
                     'google_maps': "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(address),
                     'reference': reference
                 })
@@ -110,11 +111,7 @@ class Planning():
             "FOLDER1_REF": id
         }
         r = self.s.get(url, params=params, stream=True)
-        #print(r.content)
         soup = BeautifulSoup(r.content, 'html.parser')
-        # TODO: This defaults to 25 records per page. Number of records is on page
-        print(soup.html.body)
-        print(soup.html.body.find('div', {'class': 'TitleLabel'}))
         num_documents = int(
             soup
             .html
@@ -124,22 +121,24 @@ class Planning():
             .split('-')[1]
             .split()[0]
         )
-        documents = soup.html.body.find('table', {'id':'grdResults_tblData'}).find_all('tr')
-        return num_documents, documents
-"""
-<a href="
-
-http://publicaccessdocuments.eastsuffolk.gov.uk/AniteIM.WebSearch/ExternalEntryPoint.aspx?
-SEARCH_TYPE=1
-&DOC_CLASS_CODE=DC
-&FOLDER1_REF=DC/19/1890/TPO
-
-
-" target="_blank" title="View associated documents (opens in a new window)">
-                View associated documents
-            <span class="hide">(Opens in a new window)</span></a>
-    """
-
+        documents = soup.html.body.find('table', {'id':'grdResults_tblData'}).find_all('tr', {'class':['AIMRow', 'AIMAltRow']})
+        
+        result = []
+        for doc in documents:
+            fields = doc.find_all('td')
+            info = ''.join(fields[3].contents).strip()
+            info2 = ''.join(fields[4].contents).strip()
+            d={
+                'url': self.BASE_URL + fields[0].a['href'],
+                'date': fields[1].contents[0],
+                'description': fields[2].contents[0].strip(),
+                'information': info + info2
+            }
+            result.append(d)
+        return num_documents, result
+    
+    def dl_document(self, id):
+        pass
 
 p = Planning({
     'searchCriteria.parish': 'LWTOFT',
