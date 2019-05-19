@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0"
+        name="viewport">
+  <meta content="ie=edge"
+        http-equiv="X-UA-Compatible">
+  <title>
+    {{ title }}
+  </title>
+  <style type="text/css">
+    {% include 'template.css' %}
+  </style>
+</head>
+<body>
+  <p>
+    <h1>Lowestoft Town Council</h1>
+  </p>
+  <p>
+    <h2>Planning and Environment Committee</h2>
+  </p>
+  <p>
+    <h3>Briefing notes for meeting Tuesday 28 May 2019</h3>
+  </p>
+  <p>
+  This automatically generated document covers planning applications for the parish of {{ parish }}, validated between {{ start_date.strftime("%a %d %b") }} and {{ end_date.strftime("%a %d %b") }}. Report run at {{ run_date.strftime("%H:%M %a %d %b %Y") }}.
+  </p>
+  <table>
+    <tr>
+    <th>Reference</th><th>Address and Description</th><th>Planning portal</th>
+    </tr>
+    {% for reference, application in applications.items() %}
+    <tr>
+    <td>
+      <p><a href="{{application.url}}" target="_blank">{{ reference }}</a></p>
+    </td>
+    <td>
+      <p><a href="{{application.google_maps}}" target="_blank">{{ application.address }}</a></p>
+      <p>{{ application.proposal }}</p>
+      <table class='documents'>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Information 1</th>
+          <th>Information 2</th>
+        </tr>
+        {% for document in application.documents %}
+        <tr>
+          <td>{{ document.date }}</td>
+          <td>
+            <a href="{{document.url}}" target="_blank">{{ document.description }}</a>
+          </td>
+          <td>{{ document.info1 }}</td>
+          <td>{{ document.info2 }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <p><a href="{{application.url_public_comments}}" target="_blank">Public comments</a></p>
+      <p><a href="{{application.url_constraints}}" target="_blank">Constraints</a></p>
+      <p><a href="{{application.url_related}}" target="_blank">Related cases</a></p>
+      <p><a href="{{application.url_documents}}" target="_blank">Documents</a></p>
+      <p><a href="{{application.url_map}}" target="_blank">Map</a></p>
+
+    </td>
+    {% endfor %}
+  </table>
+</body>
+</html>
