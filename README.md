@@ -8,4 +8,4 @@ This script uses data from the following resources:
 * [East Suffolk Council Planning Portal](https://publicaccess.eastsuffolk.gov.uk/online-applications/)
 * [Google Maps](https://www.google.co.uk/maps)
 
-This script is by Peter Knight, and has not as yet been adopted for formal use by any council.
+This script is by Peter Knight, and has not been adopted for formal use by any council.
