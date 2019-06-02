@@ -21,10 +21,10 @@
     <h2>Planning and Environment Committee</h2>
   </p>
   <p>
-    <h3>Briefing notes for meeting Tuesday 28 May 2019</h3>
+    <h3>Briefing notes for meeting {{ meeting_date.strftime("%A %d %B %Y") }}</h3>
   </p>
   <p>
-  This automatically generated document covers planning applications for the parish of {{ parish }}, validated between {{ start_date.strftime("%a %d %b") }} and {{ end_date.strftime("%a %d %b") }}. Report run at {{ run_date.strftime("%H:%M %a %d %b %Y") }}.
+  Report run at {{ run_date.strftime("%H:%M %a %d %b %Y") }}.
   </p>
   <table>
     <tr>
