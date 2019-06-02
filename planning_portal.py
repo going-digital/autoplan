@@ -120,13 +120,6 @@ class Planning():
 if __name__ == "__main__":
     p = Planning()
     if False:
-        applications = p.search(
-            Parish.LOWESTOFT,
-            start_date=datetime.date(2019, 5, 5),
-            end_date=datetime.date(2019, 5, 16)
-        )
-        pprint(applications)
-    if False:
         # The application below has more than 25 documents,
         # and requires multiple index page fetches.
         documents = p.documents('DC/19/1906/FUL')
@@ -136,22 +129,3 @@ if __name__ == "__main__":
         pprint(document)
     if True:
         pprint(p.get_application('DC/19/1906/FUL'))
-        pprint(p.documents('DC/19/1906/FUL'))
-    if False:
-        applications = p.search(
-            Parish.LOWESTOFT,
-            Ward.HARBOUR_AND_NORMANSTON,
-            start_date=datetime.date(2019, 5, 5),
-            end_date=datetime.date(2019, 5, 16)
-        )
-        for ref, data in applications.items():
-            print(ref)
-            dir_name = ref.replace('/', '_')
-            os.mkdir(dir_name)
-            documents = p.documents(ref)
-            for i in documents:
-                document = p.get_document(i['url'])
-                filename = os.path.join(dir_name, document['filename'])
-                with open(filename, 'wb') as f:
-                    f.write(document['content'])
-
