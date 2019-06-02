@@ -369,8 +369,10 @@ if __name__ == "__main__":
             end_date=datetime.date(2019, 5, 16)
         )
         pprint(applications)
-    if False:
-        documents = p.documents('DC/19/1951/FUL')
+    if True:
+        # The application below has more than 25 documents,
+        # and requires multiple index page fetches.
+        documents = p.documents('DC/19/1906/FUL')
         pprint(documents)
     if False:
         document = p.get_document('http://publicaccessdocuments.eastsuffolk.gov.uk/AniteIM.WebSearch/Download.aspx?ID=1480471')
