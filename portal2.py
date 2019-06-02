@@ -387,7 +387,7 @@ if __name__ == "__main__":
             print(ref)
             dir_name = ref.replace('/', '_')
             os.mkdir(dir_name)
-            _, documents = p.documents(ref)
+            documents = p.documents(ref)
             for i in documents:
                 print(i)
                 print(i['description'])
