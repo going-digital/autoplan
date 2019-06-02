@@ -20,20 +20,15 @@ applications = {}
     
 run_date = datetime.datetime.now()
 
-# Fetch metadata
-for reference in tqdm.tqdm(reference_list, desc='Metadata'):
+# Fetch applications
+for reference in tqdm.tqdm(reference_list, desc='Fetching applications', ascii=True):
     applications[reference] = p.get_application(reference)
-
-# Fetch document links
-for reference in tqdm.tqdm(reference_list, desc='Doc Links'):
-    applications[reference]['documents'] = p.documents(reference)
 
 # Build report
 templateLoader = jinja2.FileSystemLoader(searchpath='./')
 templateEnv = jinja2.Environment(loader=templateLoader)
 TEMPLATE_FILE = 'template.html.j2'
 template = templateEnv.get_template(TEMPLATE_FILE)
-pprint(applications)
 outputText = template.render(
     title='Planning notes',
     parish='Lowestoft',
