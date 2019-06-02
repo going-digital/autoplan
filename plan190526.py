@@ -2,7 +2,6 @@ import tqdm
 import planning_portal
 import jinja2
 import datetime
-from pprint import pprint
 
 meeting_date = datetime.date(2019, 5, 28)
 reference_list = [
@@ -17,11 +16,13 @@ output_file = "test3.html"
 p = planning_portal.Planning()
 
 applications = {}
-    
+
 run_date = datetime.datetime.now()
 
 # Fetch applications
-for reference in tqdm.tqdm(reference_list, desc='Fetching applications', ascii=True):
+for reference in tqdm.tqdm(
+    reference_list, desc='Fetching applications', ascii=True
+):
     applications[reference] = p.get_application(reference)
 
 # Build report

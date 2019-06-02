@@ -1,19 +1,18 @@
 import requests
-from requests.exceptions import RequestException
-from contextlib import closing
 from bs4 import BeautifulSoup
 import urllib.parse
-import enum
 import datetime
 from pprint import pprint
-import os
 
 BASE_URL = "https://publicaccess.eastsuffolk.gov.uk"
-BASE_URL_DOC =  "http://publicaccessdocuments.eastsuffolk.gov.uk/AniteIM.WebSearch/"
+BASE_URL_DOC = (
+    "http://publicaccessdocuments.eastsuffolk.gov.uk/AniteIM.WebSearch/"
+)
+
 
 class Planning():
     def __init__(self):
-         self.s = requests.Session()       
+        self.s = requests.Session()
 
     def get_application(self, reference):
         # Fetch application metadata based on an application number
@@ -22,29 +21,41 @@ class Planning():
             'searchTypeStatus': 'All',
             'searchCriteria.simpleSearchString': reference,
             'searchCriteria.simpleSearch': 'true'
-        }        
-        url = BASE_URL + '/online-applications/simpleSearchResults.do?action=firstPage'
+        }
+        url = (
+            BASE_URL +
+            '/online-applications/simpleSearchResults.do?action=firstPage'
+        )
         r1 = self.s.post(url, data=query, stream=True)
         soup = BeautifulSoup(r1.content, 'html.parser')
         results = {}
         url = BASE_URL + soup.find(id='tab_summary')['href']
-        url_public_comments = BASE_URL + soup.find(id='tab_makeComment')['href']
+        url_public_comments = (
+            BASE_URL + soup.find(id='tab_makeComment')['href']
+        )
         url_constraints = BASE_URL + soup.find(id='tab_constraints')['href']
         url_related = BASE_URL + soup.find(id='tab_relatedCases')['href']
-        url_documents = BASE_URL + soup.find(id='tab_externalDocuments')['href']
+        url_documents = (
+            BASE_URL + soup.find(id='tab_externalDocuments')['href']
+        )
         url_map = BASE_URL + soup.find(id='tab_map')['href']
         address = soup.find('span', {'class': 'address'}).string.strip()
         reference = soup.find('span', {'class': 'caseNumber'}).string.strip()
         proposal = soup.find('span', {'class': 'description'}).string.strip()
         received = datetime.datetime.strptime(
-            soup.find(id='simpleDetailsTable').find_all('tr')[1].td.string.strip(),
+            soup.find(id='simpleDetailsTable').find_all('tr')[1].td.string
+                .strip(),
             "%a %d %b %Y"
         )
         validated = datetime.datetime.strptime(
-            soup.find(id='simpleDetailsTable').find_all('tr')[2].td.string.strip(),
+            soup.find(id='simpleDetailsTable').find_all('tr')[2].td.string
+                .strip(),
             "%a %d %b %Y"
         )
-        status = soup.find(id='simpleDetailsTable').find_all('tr')[5].td.span.string.strip()
+        status = (
+            soup.find(id='simpleDetailsTable').find_all('tr')[5].td.span
+                .string.strip()
+        )
         results = {
             'proposal': proposal,
             'url': url,
@@ -57,7 +68,10 @@ class Planning():
             'received': received,
             'validated': validated,
             'status': status,
-            'google_maps': "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(address),
+            'google_maps': (
+                "https://www.google.com/maps/search/?api=1&query=" +
+                urllib.parse.quote(address)
+            ),
             'documents': self.documents(reference)
         }
         return results
@@ -75,7 +89,7 @@ class Planning():
         )
         results_url = r.url
         r = self.s.get(results_url, params=params, stream=True)
-        params['grdResultsP']=1
+        params['grdResultsP'] = 1
         result = []
         soup = BeautifulSoup(r.content, 'html.parser')
         body = soup.html.body
@@ -83,13 +97,16 @@ class Planning():
             body.find('div', {'class': 'TitleLabel'}).contents[0]
                 .split('-')[1].split()[0]
         )
-        documents = body.find('table', {'id':'grdResults_tblData'}).find_all('tr', {'class':['AIMRow', 'AIMAltRow']})
+        documents = (
+            body.find('table', {'id': 'grdResults_tblData'})
+                .find_all('tr', {'class': ['AIMRow', 'AIMAltRow']})
+        )
         while len(result) < num_documents:
             for doc in documents:
                 fields = doc.find_all('td')
                 info1 = ''.join(fields[3].contents).strip()
                 info2 = ''.join(fields[4].contents).strip()
-                d={
+                d = {
                     'url': BASE_URL_DOC + fields[0].a['href'],
                     'date': fields[1].contents[0],
                     'description': fields[2].contents[0].strip(),
@@ -102,8 +119,10 @@ class Planning():
                 params['grdResultsP'] += 1
                 r = self.s.get(results_url, params=params, stream=True)
                 soup = BeautifulSoup(r.content, 'html.parser')
-                documents = soup.html.body.find('table', {'id': 'grdResults_tblData'}).find_all('tr', {'class': ['AIMRow', 'AIMAltRow']})
-       
+                documents = (
+                    soup.html.body.find('table', {'id': 'grdResults_tblData'})
+                        .find_all('tr', {'class': ['AIMRow', 'AIMAltRow']})
+                )
         return result
 
     def get_document(self, url):
@@ -117,6 +136,7 @@ class Planning():
         }
         return response
 
+
 if __name__ == "__main__":
     p = Planning()
     if False:
@@ -125,7 +145,10 @@ if __name__ == "__main__":
         documents = p.documents('DC/19/1906/FUL')
         pprint(documents)
     if False:
-        document = p.get_document('http://publicaccessdocuments.eastsuffolk.gov.uk/AniteIM.WebSearch/Download.aspx?ID=1480471')
+        document = p.get_document((
+            'http://publicaccessdocuments.eastsuffolk.gov.uk/'
+            'AniteIM.WebSearch/Download.aspx?ID=1480471')
+        )
         pprint(document)
     if True:
         pprint(p.get_application('DC/19/1906/FUL'))
