@@ -316,27 +316,38 @@ class Planning():
             params=params,
             stream=True
         )
+        results_url = r.url
+        r = self.s.get(results_url, params=params, stream=True)
+        params['grdResultsP']=1
+        result = []
         soup = BeautifulSoup(r.content, 'html.parser')
+        body = soup.html.body
         num_documents = int(
-            soup.html.body.find('div', {'class': 'TitleLabel'}).contents[0]
+            body.find('div', {'class': 'TitleLabel'}).contents[0]
                 .split('-')[1].split()[0]
         )
-        documents = soup.html.body.find('table', {'id':'grdResults_tblData'}).find_all('tr', {'class':['AIMRow', 'AIMAltRow']})
-        
-        result = []
-        for doc in documents:
-            fields = doc.find_all('td')
-            info1 = ''.join(fields[3].contents).strip()
-            info2 = ''.join(fields[4].contents).strip()
-            d={
-                'url': BASE_URL_DOC + fields[0].a['href'],
-                'date': fields[1].contents[0],
-                'description': fields[2].contents[0].strip(),
-                'info1': info1,
-                'info2': info2
-            }
-            result.append(d)
-        return num_documents, result
+        documents = body.find('table', {'id':'grdResults_tblData'}).find_all('tr', {'class':['AIMRow', 'AIMAltRow']})
+        while len(result) < num_documents:
+            for doc in documents:
+                fields = doc.find_all('td')
+                info1 = ''.join(fields[3].contents).strip()
+                info2 = ''.join(fields[4].contents).strip()
+                d={
+                    'url': BASE_URL_DOC + fields[0].a['href'],
+                    'date': fields[1].contents[0],
+                    'description': fields[2].contents[0].strip(),
+                    'info1': info1,
+                    'info2': info2
+                }
+                result.append(d)
+            if len(result) < num_documents:
+                # Fetch next page before looping round
+                params['grdResultsP'] += 1
+                r = self.s.get(results_url, params=params, stream=True)
+                soup = BeautifulSoup(r.content, 'html.parser')
+                documents = soup.html.body.find('table', {'id': 'grdResults_tblData'}).find_all('tr', {'class': ['AIMRow', 'AIMAltRow']})
+       
+        return result
 
     def get_document(self, url):
         doc = self.s.get(url)
