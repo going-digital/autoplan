@@ -281,10 +281,14 @@ class Planning():
             address = i.find('p', {'class': 'address'}).string.strip()
             metainfo = i.find('p', {'class': 'metaInfo'}).contents
             reference = metainfo[0].strip().split(':')[1].strip()
-            received = metainfo[2].strip().split(':')[1].strip()
-            received = datetime.datetime.strptime(received, "%a %d %b %Y")
-            validated = metainfo[4].strip().split(':')[1].strip()
-            validated = datetime.datetime.strptime(validated, "%a %d %b %Y")
+            received = datetime.datetime.strptime(
+                metainfo[2].strip().split(':')[1].strip(),
+                "%a %d %b %Y"
+            )
+            validated = datetime.datetime.strptime(
+                metainfo[4].strip().split(':')[1].strip(),
+                "%a %d %b %Y"
+            )
             results[reference] = {
                 'proposal': i.a.string.strip(),
                 'url': url,
