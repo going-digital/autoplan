@@ -28,13 +28,10 @@
   </p>
   <table>
     <tr>
-      <th>Reference</th><th>Address and Description</th><th>Planning portal</th>
+      <th>Address and Description</th><th>Planning portal</th>
     </tr>
     {% for reference, application in applications.items() %}
     <tr>
-      <td>
-        <p><a href="{{ application.url }}" target="_blank">{{ reference }}</a></p>
-      </td>
       <td>
         <p><a href="{{ application.google_maps }}" target="_blank">{{ application.address }}</a></p>
         <p>{{ application.proposal }}</p>
@@ -58,6 +55,7 @@
         </table>
       </td>
       <td>
+        <p><a href="{{ application.url }}" target="_blank">{{ reference }}</a></p>
         <p><a href="{{ application.url_public_comments }}" target="_blank">Public comments</a></p>
         <p><a href="{{ application.url_constraints }}" target="_blank">Constraints</a></p>
         <p><a href="{{ application.url_related }}" target="_blank">Related cases</a></p>
