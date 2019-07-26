@@ -65,8 +65,7 @@ def get_latest_planning_agenda():
             for document in documents:
                 if document.text.strip() == "Agenda":
                     date = meeting['date']
-                    agenda_url = document['href']
-                    print(date, BASE_URL + agenda_url)
+                    url = BASE_URL + document['href']
                     found_agenda = True
                     break
         if found_agenda:
