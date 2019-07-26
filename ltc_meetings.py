@@ -9,7 +9,7 @@ from pdfminer.layout import LAParams, LTTextBox, LTTextLine
 
 def get_meetings():
     r1 = requests.get("https://lowestofttowncouncil.gov.uk/about-the-council/meetings/")
-    soup = BeautifulSoup(r1.text)
+    soup = BeautifulSoup(r1.text, 'html.parser')
     table = soup.body.find('div', {'id': 'standardPage'}).table.find_all('tr')
 
     meetings = []
