@@ -55,7 +55,7 @@ def extract_applications(text):
 def get_latest_planning_agenda():
     BASE_URL = 'https://lowestofttowncouncil.gov.uk'
 
-    meetings = ltc_meetings.get_meetings()
+    meetings = get_meetings()
     found_agenda = False
     date = None
     url = None
