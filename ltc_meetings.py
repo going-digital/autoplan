@@ -6,6 +6,7 @@ from pdfminer.pdfparser import PDFParser, PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTTextBox, LTTextLine
+import io
 
 def get_meetings():
     r1 = requests.get("https://lowestofttowncouncil.gov.uk/about-the-council/meetings/")
@@ -75,7 +76,7 @@ def get_latest_planning_agenda():
 def get_application_list():
     date, url = get_latest_planning_agenda()
     pdf = requests.get(url, allow_redirects=True).content
-    text = pdf_to_txt(pdf)
+    text = pdf_to_txt(io.BytesIO(pdf))
     applications = extract_applications(text)
     return applications
 
