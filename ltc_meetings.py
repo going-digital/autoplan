@@ -51,7 +51,7 @@ def pdf_to_txt(pdf_fp):
 
 def extract_applications(text):
     # Find strings of the form AA/11/1111/AAA
-    return re.findall(r".{2}/\d{2}/\d{4}/.{3}", extracted_text)
+    return re.findall(r".{2}/\d{2}/\d{4}/.{3}", text)
 
 def get_latest_planning_agenda():
     BASE_URL = 'https://lowestofttowncouncil.gov.uk'
