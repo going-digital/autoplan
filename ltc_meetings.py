@@ -52,6 +52,32 @@ def extract_applications(text):
     # Find strings of the form AA/11/1111/AAA
     return re.findall(r".{2}/\d{2}/\d{4}/.{3}", extracted_text)
 
-# TODO: Find latest planning agenda
-# TODO: Download planning agenda, pdf_to_txt and extract_applications
+def get_latest_planning_agenda():
+    BASE_URL = 'https://lowestofttowncouncil.gov.uk'
+
+    meetings = ltc_meetings.get_meetings()
+    found_agenda = False
+    date = None
+    url = None
+    for meeting in meetings:
+        documents = meeting['documents']
+        if len(documents) > 1:
+            for document in documents:
+                if document.text.strip() == "Agenda":
+                    date = meeting['date']
+                    agenda_url = document['href']
+                    print(date, BASE_URL + agenda_url)
+                    found_agenda = True
+                    break
+        if found_agenda:
+            break
+    return (date, url)
+
+def get_application_list():
+    date, url = get_latest_planning_agenda()
+    pdf = requests.get(url, allow_redirects=True).content
+    text = pdf_to_txt(pdf)
+    applications = extract_applications(text)
+    return applications
+
 # TODO: Integrate
